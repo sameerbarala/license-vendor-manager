@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17
+    container_name: license-manager-db
+    environment:
+      POSTGRES_DB: license_manager
+      POSTGRES_USER: license_user
+      POSTGRES_PASSWORD: license_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

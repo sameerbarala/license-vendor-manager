@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendors | License & Vendor Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>License &amp; Vendor Manager</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="vendors.html" class="active">Vendors</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Section 1: Add / Edit vendor form -->
+    <section class="card">
+      <h2 id="form-title">Add Vendor</h2>
+      <form id="vendor-form" novalidate>
+        <div class="form-row">
+          <label for="vendor-name">Vendor Name</label>
+          <input type="text" id="vendor-name" placeholder="e.g. Microsoft">
+        </div>
+
+        <div class="form-row">
+          <label for="vendor-email">Contact Email</label>
+          <input type="email" id="vendor-email" placeholder="e.g. sales@microsoft.com">
+        </div>
+
+        <div class="form-row">
+          <label for="vendor-category">Category</label>
+          <select id="vendor-category">
+            <option value="Software">Software</option>
+            <option value="Cloud">Cloud</option>
+            <option value="Security">Security</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="vendor-status">Status</label>
+          <select id="vendor-status">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+        <p id="form-error" class="error" hidden></p>
+
+        <div class="form-buttons">
+          <button type="submit" id="submit-btn" class="btn btn-primary">Add Vendor</button>
+          <button type="button" id="cancel-btn" class="btn btn-secondary" hidden>Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Section 2: Vendor table -->
+    <section class="card">
+      <h2>Vendors (<span id="vendor-count">0</span>)</h2>
+      <p class="note">Vendors are loaded from the backend API and kept in server memory until we add PostgreSQL.</p>
+      <p id="api-error" class="error" hidden></p>
+
+      <!-- NEW: search and filter controls -->
+      <div class="filters">
+        <input type="text" id="search-input" placeholder="Search by name or email...">
+        <select id="status-filter">
+          <option value="All">All statuses</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+
+      <p id="empty-message">No vendors yet. Add your first vendor above.</p>
+
+      <table id="vendor-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="vendor-table-body"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="js/vendors.js"></script>
+</body>
+</html>

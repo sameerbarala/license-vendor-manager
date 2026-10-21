@@ -1,0 +1,66 @@
+### 1. Get all vendors
+GET http://localhost:8080/api/vendors
+
+### 2. Create a vendor
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+
+{
+  "name": "Microsoft",
+  "email": "sales@microsoft.com",
+  "category": "Software",
+  "status": "Active"
+}
+
+### 3. Create a second vendor
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+
+{
+  "name": "Oracle",
+  "email": "contact@oracle.com",
+  "category": "Cloud",
+  "status": "Inactive"
+}
+
+### 4. Get one vendor
+GET http://localhost:8080/api/vendors/1
+
+### 5. Update vendor 2
+PUT http://localhost:8080/api/vendors/2
+Content-Type: application/json
+
+{
+  "name": "Oracle",
+  "email": "contact@oracle.com",
+  "category": "Cloud",
+  "status": "Active"
+}
+
+### 6. Invalid: empty name (expect 400)
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "x@y.com",
+  "category": "Other",
+  "status": "Active"
+}
+
+### 7. Invalid: duplicate name (expect 400)
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+
+{
+  "name": "microsoft",
+  "email": "other@microsoft.com",
+  "category": "Software",
+  "status": "Active"
+}
+
+### 8. Delete vendor 1
+DELETE http://localhost:8080/api/vendors/1
+
+### 9. Get a missing vendor (expect 404)
+GET http://localhost:8080/api/vendors/999
