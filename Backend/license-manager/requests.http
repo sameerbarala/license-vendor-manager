@@ -151,3 +151,59 @@ DELETE http://localhost:8080/api/licenses/3
 
 ### L9. Missing license (expect 404)
 GET http://localhost:8080/api/licenses/999
+
+############ STEP 10 TESTS ############
+
+### S1. Vendor with everything wrong (expect 400, several messages)
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+
+{ "name": "", "email": "abc", "category": "", "status": "Maybe" }
+
+### S2. Vendor with an unusual status (expect 400)
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+
+{ "name": "TestCo", "email": "a@b.com", "category": "Other", "status": "Maybe" }
+
+### S3. Duplicate vendor name (expect 409; use an existing name)
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+
+{ "name": "Figma", "email": "x@y.com", "category": "Software", "status": "Active" }
+
+### S4. Missing vendor (expect 404)
+GET http://localhost:8080/api/vendors/9999
+
+### S5. License with bad fields (expect 400)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{ "name": "", "licenseType": "Lifetime", "seats": 0, "cost": -5, "vendorId": YOUR_ID }
+
+### S6. License with a badly formatted date (expect 400)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{ "name": "Bad Date", "licenseType": "Trial", "seats": 1, "cost": 0, "expiryDate": "31-12-2027", "vendorId": YOUR_ID }
+
+### S7. Subscription without expiry (expect 400)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{ "name": "No Expiry", "licenseType": "Subscription", "seats": 1, "cost": 10, "vendorId": YOUR_ID }
+
+### S8. Unknown vendor (expect 400, "Vendor not found.")
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{ "name": "Ghost", "licenseType": "Trial", "seats": 1, "cost": 0, "expiryDate": "2027-01-01", "vendorId": 9999 }
+
+### S9. A valid license (expect 201)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{ "name": "Refactor Check", "licenseType": "Subscription", "seats": 3, "cost": 99.5, "expiryDate": "2027-06-30", "vendorId": YOUR_ID }
+
+### V-DEL. Delete a vendor that has licenses (expect 409)
+DELETE http://localhost:8080/api/vendors/7

@@ -65,7 +65,6 @@ async function apiRequest(method, url, body) {
 async function loadVendors() {
   try {
     vendors = await apiRequest("GET", API_URL);
-    hideApiError();
   } catch (err) {
     showApiError(err.message);
   }
@@ -217,6 +216,7 @@ async function deleteVendor(id) {
   if (!vendor) return;
 
   if (!confirm('Delete vendor "' + vendor.name + '"?')) return;
+  hideApiError();
 
   try {
     await apiRequest("DELETE", API_URL + "/" + id);

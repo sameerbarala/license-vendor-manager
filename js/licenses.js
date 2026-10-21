@@ -85,7 +85,6 @@ async function loadData() {
 async function loadLicenses() {
   try {
     licenses = await apiRequest("GET", LICENSES_URL);
-    hideApiError();
   } catch (err) {
     showApiError(err.message);
   }
@@ -351,6 +350,7 @@ async function deleteLicense(id) {
   if (!license) return;
 
   if (!confirm('Delete license "' + license.name + '"?')) return;
+  hideApiError();
 
   try {
     await apiRequest("DELETE", LICENSES_URL + "/" + id);
