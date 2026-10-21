@@ -64,3 +64,90 @@ DELETE http://localhost:8080/api/vendors/1
 
 ### 9. Get a missing vendor (expect 404)
 GET http://localhost:8080/api/vendors/999
+
+############ LICENSES ############
+
+### L1. Get all licenses
+GET http://localhost:8080/api/licenses
+
+### L2. Create a subscription license (change vendorId to a real one)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{
+  "name": "Microsoft 365 Business",
+  "licenseType": "Subscription",
+  "seats": 25,
+  "cost": 3125.50,
+  "expiryDate": "2027-03-31",
+  "vendorId": 5
+}
+
+### L3. Create a perpetual license (no expiry date needed)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{
+  "name": "Visual Studio Professional",
+  "licenseType": "Perpetual",
+  "seats": 5,
+  "cost": 1200,
+  "vendorId": 5
+}
+
+### L4. Update license 1 (change seats)
+PUT http://localhost:8080/api/licenses/3
+Content-Type: application/json
+
+{
+  "name": "Microsoft 365 Business",
+  "licenseType": "Subscription",
+  "seats": 40,
+  "cost": 5000,
+  "expiryDate": "2027-03-31",
+  "vendorId": 4
+}
+
+### L5. Invalid: vendor does not exist (expect 400)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{
+  "name": "Ghost License",
+  "licenseType": "Trial",
+  "seats": 1,
+  "cost": 0,
+  "expiryDate": "2027-01-01",
+  "vendorId": 9999
+}
+
+### L6. Invalid: subscription without expiry date (expect 400)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{
+  "name": "No Expiry",
+  "licenseType": "Subscription",
+  "seats": 1,
+  "cost": 10,
+  "vendorId": 4
+}
+
+### L7. Invalid: zero seats (expect 400)
+POST http://localhost:8080/api/licenses
+Content-Type: application/json
+
+{
+  "name": "Zero Seats",
+  "licenseType": "Trial",
+  "seats": 0,
+  "cost": 10,
+  "expiryDate": "2027-01-01",
+  "vendorId": 4
+}
+
+### L8. Delete license 1
+DELETE http://localhost:8080/api/licenses/3
+
+### L9. Missing license (expect 404)
+GET http://localhost:8080/api/licenses/999

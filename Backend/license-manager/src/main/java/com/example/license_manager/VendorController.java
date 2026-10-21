@@ -24,10 +24,12 @@ public class VendorController {
             Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     private final VendorRepository vendorRepository;
+    private final LicenseRepository licenseRepository;
 
-    // Constructor injection: Spring sees this constructor and passes in the repository.
-    public VendorController(VendorRepository vendorRepository) {
+    // Constructor injection: Spring sees this constructor and passes in the repositories.
+    public VendorController(VendorRepository vendorRepository, LicenseRepository licenseRepository) {
         this.vendorRepository = vendorRepository;
+        this.licenseRepository = licenseRepository;
     }
 
     // GET /api/vendors -> all vendors, ordered by id
@@ -67,6 +69,10 @@ public class VendorController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         Vendor existing = findOrThrow(id);
+        if (licenseRepository.existsByVendorId(id)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "This vendor still has licenses. Delete those licenses first.");
+        }
         vendorRepository.delete(existing);
     }
 
