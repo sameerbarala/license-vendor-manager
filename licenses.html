@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Licenses | License & Vendor Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>License &amp; Vendor Manager</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="vendors.html">Vendors</a>
+      <a href="licenses.html" class="active">Licenses</a>
+    </nav>
+  </header>
+
+  <main class="container wide">
+    <!-- Section 1: Add / Edit license form -->
+    <section class="card">
+      <h2 id="form-title">Add License</h2>
+      <form id="license-form" novalidate>
+        <div class="form-row">
+          <label for="license-name">License Name</label>
+          <input type="text" id="license-name" placeholder="e.g. Microsoft 365 Business">
+        </div>
+
+        <div class="form-row">
+          <label for="license-vendor">Vendor</label>
+          <select id="license-vendor"></select>
+          <p id="vendor-hint" class="note" hidden>
+            No vendors yet. Add one on the Vendors page first.
+          </p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="license-type">License Type</label>
+            <select id="license-type">
+              <option value="Subscription">Subscription</option>
+              <option value="Perpetual">Perpetual</option>
+              <option value="Trial">Trial</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="license-expiry">Expiry Date</label>
+            <input type="date" id="license-expiry">
+          </div>
+
+          <div class="form-row">
+            <label for="license-seats">Seats</label>
+            <input type="number" id="license-seats" min="1" step="1" placeholder="e.g. 25">
+          </div>
+
+          <div class="form-row">
+            <label for="license-cost">Cost</label>
+            <input type="number" id="license-cost" min="0" step="0.01" placeholder="e.g. 3125.50">
+          </div>
+        </div>
+
+        <p id="form-error" class="error" hidden></p>
+
+        <div class="form-buttons">
+          <button type="submit" id="submit-btn" class="btn btn-primary">Add License</button>
+          <button type="button" id="cancel-btn" class="btn btn-secondary" hidden>Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Section 2: License table -->
+    <section class="card">
+      <h2>Licenses (<span id="license-count">0</span>)</h2>
+      <p class="note">Licenses are loaded from the backend API and stored in PostgreSQL.</p>
+      <p id="api-error" class="error" hidden></p>
+      <p id="summary" class="summary" hidden></p>
+
+      <div class="filters">
+        <input type="text" id="search-input" placeholder="Search by license or vendor name...">
+        <select id="type-filter">
+          <option value="All">All types</option>
+          <option value="Subscription">Subscription</option>
+          <option value="Perpetual">Perpetual</option>
+          <option value="Trial">Trial</option>
+        </select>
+      </div>
+
+      <p id="empty-message">No licenses yet. Add your first license above.</p>
+
+      <div class="table-wrap">
+        <table id="license-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Vendor</th>
+              <th>Type</th>
+              <th>Seats</th>
+              <th>Cost</th>
+              <th>Expiry</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="license-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/licenses.js"></script>
+</body>
+</html>
