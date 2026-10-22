@@ -316,3 +316,8 @@ td .badge {
     text-align: left;
   }
 }
+/* ---------- Added in Step 13b ---------- */
+
+.login-box {
+  max-width: 420px;
+}

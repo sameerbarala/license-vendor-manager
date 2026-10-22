@@ -23,7 +23,7 @@ const costBars = document.getElementById("cost-bars");
 async function apiGet(url) {
   let response;
   try {
-    response = await fetch(url);
+    response = await authFetch(url);
   } catch (err) {
     throw new Error("Cannot reach the server. Is the backend running on port 8080?");
   }

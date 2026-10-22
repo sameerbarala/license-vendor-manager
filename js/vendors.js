@@ -40,7 +40,7 @@ async function apiRequest(method, url, body) {
 
   let response;
   try {
-    response = await fetch(url, options);
+    response = await authFetch(url, options);
   } catch (err) {
     // fetch only throws when the server can't be reached at all
     throw new Error("Cannot reach the server. Is the backend running on port 8080?");

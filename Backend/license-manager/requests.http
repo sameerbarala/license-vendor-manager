@@ -207,3 +207,43 @@ Content-Type: application/json
 
 ### V-DEL. Delete a vendor that has licenses (expect 409)
 DELETE http://localhost:8080/api/vendors/7
+
+############ AUTH TESTS ############
+
+### A1. No token (expect 401)
+GET http://localhost:8080/api/vendors
+
+### A2. Wrong password (expect 401)
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "wrong" }
+
+### A3. Empty fields (expect 400)
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{ "username": "", "password": "" }
+
+### A4. Correct login (expect 200 and a token)
+# @name login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+### A5. Vendors WITH the token from A4 (expect 200)
+GET http://localhost:8080/api/vendors
+Authorization: Bearer {{login.response.body.token}}
+
+### A6. Who am I (expect 200 and admin)
+GET http://localhost:8080/api/auth/me
+Authorization: Bearer {{login.response.body.token}}
+
+### A7. Fake token (expect 401)
+GET http://localhost:8080/api/vendors
+Authorization: Bearer abc.def.ghi
+
+### A8. Licenses with the token (expect 200)
+GET http://localhost:8080/api/licenses
+Authorization: Bearer {{login.response.body.token}}

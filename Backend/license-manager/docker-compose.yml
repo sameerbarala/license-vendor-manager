@@ -28,6 +28,9 @@ services:
       DB_USERNAME: license_user
       DB_PASSWORD: license_pass
       CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-before-deploying-123456}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
     ports:
       - "8080:8080"
 
@@ -46,6 +49,7 @@ services:
       - ../../licenses.html:/usr/share/nginx/html/licenses.html:ro
       - ../../css:/usr/share/nginx/html/css:ro
       - ../../js:/usr/share/nginx/html/js:ro
+      - ../../login.html:/usr/share/nginx/html/login.html:ro
 
 volumes:
   pgdata:

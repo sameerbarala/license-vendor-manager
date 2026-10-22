@@ -6,10 +6,10 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.validation.FieldError;
 
 // @RestControllerAdvice: applies to every controller. When one throws an exception
 // listed below, Spring calls the matching method here to build the response.
@@ -49,6 +49,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST,
                 "Invalid request body. Check the JSON and field formats (dates use YYYY-MM-DD).",
                 Map.of());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> handleUnauthorized(UnauthorizedException ex) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), Map.of());
     }
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message,

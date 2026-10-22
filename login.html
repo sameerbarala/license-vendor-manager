@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | License & Vendor Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>License &amp; Vendor Manager</h1>
+  </header>
+
+  <main class="container login-box">
+    <section class="card">
+      <h2>Sign in</h2>
+      <form id="login-form" novalidate>
+        <div class="form-row">
+          <label for="username">Username</label>
+          <input type="text" id="username" autocomplete="username">
+        </div>
+        <div class="form-row">
+          <label for="password">Password</label>
+          <input type="password" id="password" autocomplete="current-password">
+        </div>
+
+        <p id="login-error" class="error" hidden></p>
+        <button type="submit" id="login-btn" class="btn btn-primary">Sign in</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/login.js"></script>
+</body>
+</html>
