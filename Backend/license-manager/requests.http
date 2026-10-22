@@ -247,3 +247,104 @@ Authorization: Bearer abc.def.ghi
 ### A8. Licenses with the token (expect 200)
 GET http://localhost:8080/api/licenses
 Authorization: Bearer {{login.response.body.token}}
+############ STEP 14 TESTS ############
+
+### B1. Login as admin
+# @name adminLogin
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+### B2. Admin: who am I (expect role ADMIN)
+GET http://localhost:8080/api/auth/me
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+### B3. Admin: create a viewer (expect 201)
+# @name createViewer
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+{ "username": "viewer1", "password": "viewer123", "role": "VIEWER" }
+
+### B4. Duplicate username (expect 409)
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+{ "username": "VIEWER1", "password": "viewer123", "role": "VIEWER" }
+
+### B5. Short password (expect 400)
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+{ "username": "bob", "password": "abc", "role": "VIEWER" }
+
+### B6. List users (expect 200, no password fields)
+GET http://localhost:8080/api/users
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+### B7. Login as the viewer
+# @name viewerLogin
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{ "username": "viewer1", "password": "viewer123" }
+
+### B8. Viewer reads vendors (expect 200)
+GET http://localhost:8080/api/vendors
+Authorization: Bearer {{viewerLogin.response.body.token}}
+
+### B9. Viewer tries to create a vendor (expect 403)
+POST http://localhost:8080/api/vendors
+Content-Type: application/json
+Authorization: Bearer {{viewerLogin.response.body.token}}
+
+{ "name": "Blocked", "email": "a@b.com", "category": "Other", "status": "Active" }
+
+### B10. Viewer tries to list users (expect 403)
+GET http://localhost:8080/api/users
+Authorization: Bearer {{viewerLogin.response.body.token}}
+
+### B11. Viewer changes own password, wrong current (expect 400)
+POST http://localhost:8080/api/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{viewerLogin.response.body.token}}
+
+{ "currentPassword": "nope", "newPassword": "newviewer123" }
+
+### B12. Viewer changes own password correctly (expect 204)
+POST http://localhost:8080/api/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{viewerLogin.response.body.token}}
+
+{ "currentPassword": "viewer123", "newPassword": "newviewer123" }
+
+### B13. Admin promotes viewer to ADMIN (expect 200)
+PUT http://localhost:8080/api/users/{{createViewer.response.body.id}}/role
+Content-Type: application/json
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+{ "role": "ADMIN" }
+
+### B14. Admin demotes viewer back (expect 200)
+PUT http://localhost:8080/api/users/{{createViewer.response.body.id}}/role
+Content-Type: application/json
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+{ "role": "VIEWER" }
+
+### B15. Admin deletes own account (expect 400)
+# Replace 1 with admin's real id from B6
+DELETE http://localhost:8080/api/users/1
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+### B16. Admin deletes the viewer (expect 204)
+DELETE http://localhost:8080/api/users/{{createViewer.response.body.id}}
+Authorization: Bearer {{adminLogin.response.body.token}}
+
+### B17. Deleted user's old token stops working (expect 401)
+GET http://localhost:8080/api/vendors
+Authorization: Bearer {{viewerLogin.response.body.token}}

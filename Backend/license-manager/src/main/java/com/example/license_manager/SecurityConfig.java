@@ -22,24 +22,27 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtService jwtService)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtService jwtService,
+                                                   UserRepository userRepository) throws Exception {
         http
-            // CSRF protects cookie-based sessions. We use a header token, so it is switched off.
             .csrf(csrf -> csrf.disable())
-            // Uses the CORS rules from WebConfig.
             .cors(Customizer.withDefaults())
-            // No server-side sessions: every request must carry its own token.
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // Rules are checked top to bottom; the first match wins.
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login").permitAll()
-                .requestMatchers("/error").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // browser preflight
+                .requestMatchers("/api/auth/login", "/error").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/api/users/**").hasRole("ADMIN")
+                .requestMatchers("/api/auth/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/vendors/**", "/api/licenses/**")
+                    .hasAnyRole("ADMIN", "VIEWER")
+                .requestMatchers("/api/vendors/**", "/api/licenses/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
-            // Not logged in -> a plain 401 (the default would be 403).
+            // Not logged in -> 401. Logged in but not allowed -> Spring's default 403.
             .exceptionHandling(e -> e.authenticationEntryPoint(
                     new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-            .addFilterBefore(new JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthFilter(jwtService, userRepository),
+                    UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

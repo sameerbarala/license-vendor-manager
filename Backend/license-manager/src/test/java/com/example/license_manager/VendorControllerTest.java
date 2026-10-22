@@ -29,6 +29,8 @@ class VendorControllerTest {
     private VendorService vendorService;
     @MockitoBean
     private JwtService jwtService;
+    @MockitoBean
+    private UserRepository userRepository;
 
     @Test
     void getAllReturnsVendorsAsJson() throws Exception {

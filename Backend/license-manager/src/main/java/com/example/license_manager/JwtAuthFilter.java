@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -12,14 +13,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-// Runs once per request, before the controllers. It is deliberately NOT a @Component:
-// SecurityConfig creates it, which keeps controller tests simple.
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -29,15 +30,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-            // If the token is valid, mark this request as "logged in as <username>".
-            jwtService.validateAndGetUsername(token).ifPresent(username -> {
-                var authentication = new UsernamePasswordAuthenticationToken(username, null, List.of());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            });
+            jwtService.validateAndGetUsername(header.substring(7))
+                    // The token must belong to a user who still exists.
+                    .flatMap(userRepository::findByUsername)
+                    .ifPresent(user -> {
+                        // A missing role gets the least privilege.
+                        String role = user.getRole() == null ? "VIEWER" : user.getRole();
+                        var authority = new SimpleGrantedAuthority("ROLE_" + role);
+                        var authentication = new UsernamePasswordAuthenticationToken(
+                                user.getUsername(), null, List.of(authority));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    });
         }
-        // Always continue. If nobody was marked as logged in, the rules in
-        // SecurityConfig reject the request later.
         chain.doFilter(request, response);
     }
 }

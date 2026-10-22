@@ -31,4 +31,11 @@ public class User {
     public void setUsername(String username) { this.username = username; }
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    // "ADMIN" or "VIEWER"
+    @Column
+    private String role;
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }
