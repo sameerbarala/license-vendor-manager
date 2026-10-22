@@ -17,11 +17,20 @@ A full-stack web app for managing software vendors and licenses.
 
 ## Run locally
 
-Requirements: JDK 21 or newer, Docker Desktop, VS Code with the Live Server extension.
+## Run with Docker
 
-1. Start the database (from `Backend/license-manager`): docker compose up -d
-2. Start the backend (same folder): ./mvnw spring-boot:run
-3. Open `vendors.html` with Live Server (the API runs at http://localhost:8080/api/vendors).
+Requirements: Docker Desktop.
+
+From `Backend/license-manager`:
+
+```
+docker compose up --build -d
+```
+
+- App: http://localhost:3000
+- API: http://localhost:8080/api/vendors
+
+Stop with `docker compose down`.
 
 ## API
 

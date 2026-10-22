@@ -1,0 +1,5 @@
+target/
+.git
+.vscode
+*.log
+output.txt

@@ -10,6 +10,42 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    # Docker runs this command repeatedly; "healthy" means the database accepts connections.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U license_user -d license_manager"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    container_name: license-manager-backend
+    depends_on:
+      db:
+        condition: service_healthy   # wait until the database is ready
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/license_manager   # "db" = the service name above
+      DB_USERNAME: license_user
+      DB_PASSWORD: license_pass
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    ports:
+      - "8080:8080"
+
+  frontend:
+    image: nginx:alpine
+    container_name: license-manager-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    # Mount your HTML, CSS and JS into nginx's web folder (read only).
+    # ../../ is the project root, two folders above this file.
+    volumes:
+      - ../../index.html:/usr/share/nginx/html/index.html:ro
+      - ../../vendors.html:/usr/share/nginx/html/vendors.html:ro
+      - ../../licenses.html:/usr/share/nginx/html/licenses.html:ro
+      - ../../css:/usr/share/nginx/html/css:ro
+      - ../../js:/usr/share/nginx/html/js:ro
 
 volumes:
   pgdata:
