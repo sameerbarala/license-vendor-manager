@@ -1,0 +1,20 @@
+{$SITE_URL} {
+	encode gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy no-referrer
+	}
+
+	# Anything under /api goes to the Spring Boot container.
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+
+	# Everything else is a static page from /srv.
+	handle {
+		root * /srv
+		file_server
+	}
+}

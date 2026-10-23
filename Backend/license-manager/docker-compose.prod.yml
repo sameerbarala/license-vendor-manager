@@ -1,0 +1,70 @@
+# Separate project name so this never mixes with your development containers or volumes.
+name: license-prod
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: license_manager
+      POSTGRES_USER: license_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    # No "ports:" on purpose. The database is reachable only from other containers.
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U license_user -d license_manager"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    # No "ports:" here either. Only Caddy can reach the backend.
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/license_manager
+      DB_USERNAME: license_user
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+      CORS_ORIGINS: ${SITE_URL:?Set SITE_URL in .env}
+      # Tells Spring it is behind a proxy, so it reads the real address and https from Caddy's headers.
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+      # No SQL spam in production logs.
+      SPRING_JPA_SHOW_SQL: "false"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      SITE_URL: ${SITE_URL:?Set SITE_URL in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # List the web files one by one. Never mount the whole project folder,
+      # or your source code and .git folder would be downloadable.
+      - ../../index.html:/srv/index.html:ro
+      - ../../login.html:/srv/login.html:ro
+      - ../../vendors.html:/srv/vendors.html:ro
+      - ../../licenses.html:/srv/licenses.html:ro
+      - ../../account.html:/srv/account.html:ro
+      - ../../users.html:/srv/users.html:ro
+      - ../../css:/srv/css:ro
+      - ../../js:/srv/js:ro
+      # Keeps certificates between restarts (Let's Encrypt limits how often you can request them).
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

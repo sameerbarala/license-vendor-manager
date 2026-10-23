@@ -1,4 +1,7 @@
-const LOGIN_URL = "http://localhost:8080/api/auth/login";
+const API_BASE = ["3000", "5500", "5501"].includes(window.location.port)
+  ? "http://localhost:8080"
+  : "";
+const LOGIN_URL = API_BASE + "/api/auth/login";
 
 const form = document.getElementById("login-form");
 const usernameInput = document.getElementById("username");

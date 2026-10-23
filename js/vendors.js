@@ -1,5 +1,5 @@
 // ---------- 1. Settings and state ----------
-const API_URL = "http://localhost:8080/api/vendors";
+const API_URL = API_BASE + "/api/vendors";
 
 // vendors is now just a copy of what the server returned.
 // The server is the source of truth, not this array.

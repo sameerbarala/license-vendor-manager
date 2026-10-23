@@ -1,6 +1,6 @@
 // ---------- 1. Settings and state ----------
-const LICENSES_URL = "http://localhost:8080/api/licenses";
-const VENDORS_URL = "http://localhost:8080/api/vendors";
+const LICENSES_URL = API_BASE + "/api/licenses";
+const VENDORS_URL = API_BASE + "/api/vendors";
 const EXPIRING_SOON_DAYS = 30;
 
 // Both arrays are copies of what the server returned. The server is the source of truth.
