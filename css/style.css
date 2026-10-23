@@ -321,3 +321,19 @@ td .badge {
 .login-box {
   max-width: 420px;
 }
+
+/* ---------- Added in Step 14b ---------- */
+
+body.viewer .admin-only,
+body.viewer .actions {
+  display: none !important;
+}
+
+.success {
+  color: #1b6b34;
+  margin: 0 0 12px;
+}
+
+h3 {
+  margin-bottom: 8px;
+}

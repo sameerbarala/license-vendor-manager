@@ -47,6 +47,7 @@ async function apiRequest(method, url, body) {
   }
 
   if (!response.ok) {
+    if (response.status === 403) throw new Error("You do not have permission to do this.");
     // Our Spring code puts a readable "message" in the JSON of error responses
     let message = "Request failed (status " + response.status + ").";
     try {

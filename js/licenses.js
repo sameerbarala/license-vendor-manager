@@ -44,12 +44,13 @@ async function apiRequest(method, url, body) {
 
   let response;
   try {
-    response = await fetch(url, options);
+    response = await authFetch(url, options);
   } catch (err) {
     throw new Error("Cannot reach the server. Is the backend running on port 8080?");
   }
 
   if (!response.ok) {
+    if (response.status === 403) throw new Error("You do not have permission to do this.");
     let message = "Request failed (status " + response.status + ").";
     try {
       const data = await response.json();

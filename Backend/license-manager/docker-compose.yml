@@ -50,6 +50,8 @@ services:
       - ../../css:/usr/share/nginx/html/css:ro
       - ../../js:/usr/share/nginx/html/js:ro
       - ../../login.html:/usr/share/nginx/html/login.html:ro
+      - ../../account.html:/usr/share/nginx/html/account.html:ro
+      - ../../users.html:/usr/share/nginx/html/users.html:ro
 
 volumes:
   pgdata:

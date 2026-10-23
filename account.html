@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account | License & Vendor Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>License &amp; Vendor Manager</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="vendors.html">Vendors</a>
+      <a href="licenses.html">Licenses</a>
+    </nav>
+  </header>
+
+  <main class="container login-box">
+    <section class="card">
+      <h2>My account</h2>
+      <p>Signed in as <strong id="who"></strong> (<span id="my-role"></span>)</p>
+
+      <h3>Change password</h3>
+      <form id="password-form" novalidate>
+        <div class="form-row">
+          <label for="current-password">Current password</label>
+          <input type="password" id="current-password" autocomplete="current-password">
+        </div>
+        <div class="form-row">
+          <label for="new-password">New password (8 to 72 characters)</label>
+          <input type="password" id="new-password" autocomplete="new-password">
+        </div>
+        <div class="form-row">
+          <label for="confirm-password">Confirm new password</label>
+          <input type="password" id="confirm-password" autocomplete="new-password">
+        </div>
+
+        <p id="form-error" class="error" hidden></p>
+        <p id="form-success" class="success" hidden></p>
+        <button type="submit" id="submit-btn" class="btn btn-primary">Change password</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/account.js"></script>
+</body>
+</html>

@@ -46,6 +46,7 @@ form.addEventListener("submit", async (event) => {
 
     localStorage.setItem("lm_token", data.token);
     localStorage.setItem("lm_user", data.username);
+    localStorage.setItem("lm_role", data.role);
     window.location.href = "index.html";
   } catch (err) {
     showError("Cannot reach the server. Is the backend running on port 8080?");

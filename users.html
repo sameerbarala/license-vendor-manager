@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users | License & Vendor Manager</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>License &amp; Vendor Manager</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="vendors.html">Vendors</a>
+      <a href="licenses.html">Licenses</a>
+    </nav>
+  </header>
+
+  <main class="container wide">
+    <section class="card">
+      <h2>Add User</h2>
+      <form id="user-form" novalidate>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="new-username">Username (3 to 50 characters)</label>
+            <input type="text" id="new-username" autocomplete="off">
+          </div>
+          <div class="form-row">
+            <label for="new-user-password">Password (8 to 72 characters)</label>
+            <input type="password" id="new-user-password" autocomplete="new-password">
+          </div>
+          <div class="form-row">
+            <label for="new-user-role">Role</label>
+            <select id="new-user-role">
+              <option value="VIEWER">VIEWER (read only)</option>
+              <option value="ADMIN">ADMIN (full access)</option>
+            </select>
+          </div>
+        </div>
+        <p id="form-error" class="error" hidden></p>
+        <button type="submit" id="submit-btn" class="btn btn-primary">Add User</button>
+      </form>
+    </section>
+
+    <section class="card" id="reset-card" hidden>
+      <h2>Reset password</h2>
+      <p>New password for <strong id="reset-name"></strong></p>
+      <form id="reset-form" novalidate>
+        <div class="form-row">
+          <label for="reset-password">New password (8 to 72 characters)</label>
+          <input type="password" id="reset-password" autocomplete="new-password">
+        </div>
+        <p id="reset-error" class="error" hidden></p>
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary">Reset password</button>
+          <button type="button" id="reset-cancel" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Users (<span id="user-count">0</span>)</h2>
+      <p id="api-error" class="error" hidden></p>
+      <p id="success" class="success" hidden></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/users.js"></script>
+</body>
+</html>
