@@ -1,0 +1,5 @@
+.git
+.vscode
+Backend/license-manager/target
+*.log
+.env
