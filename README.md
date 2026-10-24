@@ -2,7 +2,7 @@
 
 A full-stack web application for tracking software vendors and their licenses: who you buy from, how many seats you have, what it costs, and what is about to expire.
 
-**Live demo:** https://license-vendor-manager.onrender.com
+**Live demo:** https://license-vendor-manager.vercel.app
 *(Free hosting: the first visit after a period of inactivity can take about a minute to wake up.)*
 
 **Demo login (read-only):** `Sameer` / `sameer1234`
@@ -214,15 +214,68 @@ cd Backend/license-manager
 
 ---
 
+
 ## Deployment
 
-The live demo runs on free tiers:
+The live demo is a split deployment on free tiers:
 
-- **Render** runs the root `Dockerfile`, which packages the pages and the API into one service.
-- **Neon** provides PostgreSQL.
-- Secrets are set as environment variables in Render, never stored in the repository.
+```
+Browser
+  |
+  |-- pages (HTML, CSS, JS) --> Vercel (CDN)
+  |
+  '-- /api/... (JSON, JWT) ---> Render (Spring Boot, Docker) --> Neon (PostgreSQL)
+```
 
-`docker-compose.prod.yml` is a self-hosted alternative (for a VPS): Caddy handles HTTPS, only ports 80 and 443 are exposed, and the database and backend are reachable only inside Docker.
+| Part | Host | Notes |
+|---|---|---|
+| Frontend | Vercel | Static files only, served from a CDN |
+| API | Render (Docker web service) | Built from the root `Dockerfile` |
+| Database | Neon | Managed PostgreSQL |
+
+### Backend (Render)
+
+- Language: Docker, Dockerfile path `./Dockerfile`, root directory empty, free instance type.
+- Environment variables (set in the Render dashboard, never committed to Git):
+
+| Variable | Purpose |
+|---|---|
+| `DB_URL` | `jdbc:postgresql://<neon-host>/<database>?sslmode=require` |
+| `DB_USERNAME` | Database user |
+| `DB_PASSWORD` | Database password |
+| `JWT_SECRET` | Token signing key (generate with `openssl rand -base64 48`) |
+| `ADMIN_USERNAME` | First admin account |
+| `ADMIN_PASSWORD` | First admin password |
+| `CORS_ORIGINS` | The Vercel address, for example `https://license-vendor-manager.vercel.app` (no trailing slash) |
+| `SPRING_JPA_SHOW_SQL` | `false` |
+| `SERVER_FORWARD_HEADERS_STRATEGY` | `framework` |
+
+### Frontend (Vercel)
+
+- Framework preset: Other
+- Build command: `mkdir -p public && cp *.html public/ && cp -r css js public/`
+- Output directory: `public`
+- `js/auth.js` and `js/login.js` contain the `PRODUCTION_API` address of the Render backend.
+
+Only the pages are published. The `Backend` folder and source code are not.
+
+### Updating
+
+Pushing to the `main` branch redeploys both Render and Vercel automatically.
+
+### Free-tier notes
+
+- The Render service sleeps after about 15 minutes without traffic, so the first request afterwards can take up to a minute. The login page shows a "waking up" message while it starts.
+- The Neon database pauses when idle and resumes on the next query.
+- Secrets are stored only as environment variables on the hosting platforms.
+
+### Self-hosting alternative
+
+`Backend/license-manager/docker-compose.prod.yml` runs the whole stack on one server: Caddy provides automatic HTTPS, only ports 80 and 443 are exposed, and the database and backend are reachable only inside Docker. Copy `.env.example` to `.env`, fill in the values, then run:
+
+```
+docker compose -f docker-compose.prod.yml up --build -d
+```
 
 ---
 
