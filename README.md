@@ -246,7 +246,7 @@ Browser
 | `JWT_SECRET` | Token signing key (generate with `openssl rand -base64 48`) |
 | `ADMIN_USERNAME` | First admin account |
 | `ADMIN_PASSWORD` | First admin password |
-| `CORS_ORIGINS` | The Vercel address, for example `https://license-vendor-manager.vercel.app` (no trailing slash) |
+| `CORS_ORIGINS` | `https://license-vendor-manager.vercel.app` |
 | `SPRING_JPA_SHOW_SQL` | `false` |
 | `SERVER_FORWARD_HEADERS_STRATEGY` | `framework` |
 
