@@ -4,9 +4,12 @@ const USER_KEY = "lm_user";
 const ROLE_KEY = "lm_role";
 // Live Server (5500/5501) and the old dev nginx (3000) talk to the backend on 8080.
 // Anywhere else (production, or the Caddy setup below) the API is on the same address as the page.
+// Your Render backend, no trailing slash.
+const PRODUCTION_API = "https://license-vendor-manager.onrender.com";
+
 const API_BASE = ["3000", "5500", "5501"].includes(window.location.port)
   ? "http://localhost:8080"
-  : "";
+  : PRODUCTION_API;
 
 function getToken() {
   try {

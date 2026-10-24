@@ -1,6 +1,8 @@
+const PRODUCTION_API = "https://license-vendor-manager.onrender.com";
+
 const API_BASE = ["3000", "5500", "5501"].includes(window.location.port)
   ? "http://localhost:8080"
-  : "";
+  : PRODUCTION_API;
 const LOGIN_URL = API_BASE + "/api/auth/login";
 
 const form = document.getElementById("login-form");
@@ -31,6 +33,9 @@ form.addEventListener("submit", async (event) => {
   }
 
   loginBtn.disabled = true;
+  const wakeTimer = setTimeout(() => {
+    showError("Waking up the server, this can take up to a minute...");
+  }, 4000);
   try {
     // Plain fetch, not authFetch: there is no token yet, and a wrong password
     // also returns 401, which must show a message instead of redirecting.
@@ -54,6 +59,7 @@ form.addEventListener("submit", async (event) => {
   } catch (err) {
     showError("Cannot reach the server. Is the backend running on port 8080?");
   } finally {
+    clearTimeout(wakeTimer);
     loginBtn.disabled = false;
   }
 });
